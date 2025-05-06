@@ -1,0 +1,113 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    padding-top: 140px; /* Make space for fixed header */
+}
+
+.container {
+    width: 100%;
+}
+
+.header-container {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    background-color: white;
+    z-index: 1000;
+    padding: 10px 0;
+    text-align: center;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.table-wrapper {
+    max-height: 500px;
+    overflow-y: auto;
+    overflow-x: auto;
+    border: 1px solid #ccc;
+}
+
+#defects {
+    font-family: Arial, Helvetica, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+#defects td, th {
+    border: 1px solid rgb(17, 4, 4);
+    padding: 6px;
+    text-align: left;
+}
+
+#defects tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+#defects tr:hover {
+    background-color: #ddd;
+}
+
+#defects th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: center;
+    background-color: #04AA6D;
+    color: white;
+}
+
+/* Sticky header for the table */
+.fixed-header {
+    position: sticky;
+    top: 0;
+    background-color: white; 
+    z-index: 999;
+    box-shadow: 0px 2px 3px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgb(17, 4, 4);
+}
+
+#defects #mid {
+    text-align: center;
+}
+
+#defects #up {
+    background-color: blue;
+    border-color: white;
+    border-radius: 5px;
+    padding: 8px;
+    color: white;
+}
+
+#defects #del {
+    background-color: red;
+    border-color: white;
+    border-radius: 5px;
+    padding: 8px;
+    color: white;
+}
+
+#defects button {
+    width: 100%;
+}
+
+.container #new3 {
+    padding: 8px;
+    background-color: rgb(27, 24, 199);
+    color: white;
+    border-radius: 4px;
+    border-color: #04AA6D;
+}
+
+h1 {
+    text-align: center;
+    color: green;
+    margin-bottom: 5px;
+}
+
+a button {
+    text-align: center;
+}

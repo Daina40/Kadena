@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+      <meta charset="UTF-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <title>Daily Production & Inspection</title>
+      <script src="https://cdn.tailwindcss.com"></script>
+      <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+      <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+  </head>
+
+  <style>
+    .search-box {
+      margin-bottom: 10px;
+      position: relative;        
+      float: right;
+    }
+
+    .search-box input {
+      height: 34px;
+      border-radius: 20px;
+      padding-left: 35px;
+      border-color: #ddd;
+      box-shadow: none;
+    }
+
+    .search-box input:focus {
+      border-color: #3FBAE4;
+    }
+
+    .search-box i {
+      color: #a0a5b1;
+      position: absolute;
+      font-size: 19px;
+      top: 8px;
+      left: 10px;
+    }
+
+    table td i {
+      font-size: 13px;
+      margin: 0 5px;
+      cursor: pointer;
+    }
+    table td a.view {
+      color: #03A9F4;
+    }
+    table td a.edit {
+      color: #FFC107;
+    }
+    table td a.delete {
+      color: #E34724;
+    }
+    table td{
+      width: auto;
+    }
+    .pagination {
+        float: right;
+        margin: 0 0 5px;
+    }
+    .pagination li a {
+        border: none;
+        font-size: 95%;
+        width: 30px;
+        height: 30px;
+        color: #999;
+        margin: 0 2px;
+        line-height: 30px;
+        border-radius: 30px !important;
+        text-align: center;
+        padding: 0;
+    }
+    .pagination li a:hover {
+        color: #666;
+    }	
+    .pagination li.active a {
+        background: #03A9F4;
+    }
+    .pagination li.active a:hover {        
+        background: #0397d6;
+    }
+	.pagination li.disabled i {
+        color: #ccc;
+    }
+    .pagination li i {
+        font-size: 16px;
+        padding-top: 6px
+    }
+    .hint-text {
+        float: left;
+        margin-top: 6px;
+        font-size: 95%;
+    } 
+
+    select {
+      min-width: 120px;
+      max-width: 100%;
+      position: relative;
+      z-index: 1000;
+    } 
+
+    select:focus {
+      position: absolute;
+      width: auto;
+      z-index: 9999;
+    }
+
+    tfoot {
+    background-color: #f1f1f1;
+    font-weight: bold;
+    }
+
+  </style>
+
+  <body class="bg-gray-100 p-4">
+    <div class="container mx-auto">
+      <h1 class="text-2xl font-bold text-center mb-4">DAILY (STYLE) PRODUCTION AND INSPECTION SUMMARY (KSL/QC/03/074)</h1>
+      <p class="text-center text-sm mb-4">
+        {{ day_name }}, {{ month_name }} {{ day_number }}, {{ year }}
+      </p>
+      <div class="overflow-x-auto">
+        <div class="search-box">
+          <i class="material-icons">&#xE8B6;</i>
+            <input type="text" class="form-control" placeholder="Search&hellip;">
+        </div>
+        <table id="calculation-table" class="table-auto border-collapse border border-gray-300 w-full">
+          <thead class="bg-gray-200">
+            <tr>
+              <th class="border border-gray-300 p-2">Floor</th>
+              <th class="border border-gray-300 p-2">Line</th>
+              <th class="border border-gray-300 p-2">Buyer</th>
+              <th class="border border-gray-300 p-2">Style</th>
+              <th class="border border-gray-300 p-2">Item</th>
+              <th class="border border-gray-300 p-2">PO/Buy</th>
+              <th class="border border-gray-300 p-2">Order Qty</th>
+              <th class="border border-gray-300 p-2">Daily Prod</th>
+              <th class="border border-gray-300 p-2">Total Prod</th>
+              <th class="border border-gray-300 p-2">Daily Insp</th>
+              <th class="border border-gray-300 p-2">Total Insp</th>
+              <th class="border border-gray-300 p-2">Daily Pack Pass</th>
+              <th class="border border-gray-300 p-2">Total Pack Pass</th>
+              <th class="border border-gray-300 p-2">Line Balance</th>
+              <th class="border border-gray-300 p-2">Insp Balance</th>
+              <th class="border border-gray-300 p-2">Total Balance</th>
+              <th class="border border-gray-300 p-2">Remarks</th>
+              <th class="border border-gray-300 p-2">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="table-body">
+            {% for item in productions %}
+            <tr class="hover:bg-gray-100">
+                <!-- Floor -->
+                <td class="border border-gray-300 p-2">{{ item.floor_name }}</td>
+        
+                <!-- Line -->
+                <td class="border border-gray-300 p-2">{{ item.line_name }}</td>
+        
+                <td class="border border-gray-300 p-2">{{ item.buyer }}</td>
+                <td class="border border-gray-300 p-2">{{ item.style }}</td>
+                <td class="border border-gray-300 p-2">{{ item.item }}</td>
+                <td class="border border-gray-300 p-2">{{ item.po_buy }}</td>
+        
+                <td class="border border-gray-300 p-2"><input type="number" value="{{ item.order_qty }}" /></td>
+                <td class="border border-gray-300 p-2"><input type="number" value="{{ item.daily_prod }}" /></td>
+                <td class="border border-gray-300 p-2"><input type="number" value="{{ item.total_prod }}" /></td>
+                <td class="border border-gray-300 p-2"><input type="number" value="{{ item.daily_insp }}" /></td>
+                <td class="border border-gray-300 p-2"><input type="number" value="{{ item.total_insp }}" /></td>
+                <td class="border border-gray-300 p-2"><input type="number" value="{{ item.daily_packpass }}" /></td>
+                <td class="border border-gray-300 p-2"><input type="number" value="{{ item.total_packpass }}" /></td>
+                <td class="border border-gray-300 p-2"><input type="number" value="{{ item.line_balance }}" /></td>
+                <td class="border border-gray-300 p-2"><input type="number" value="{{ item.insp_balance }}" /></td>
+                <td class="border border-gray-300 p-2"><input type="number" value="{{ item.total_balance }}" readonly /></td>
+                <td class="border border-gray-300 p-2">{{ item.remarks }}</td>
+                
+                <td class="border border-gray-300 p-2">
+                    <a href="#" class="delete" title="Delete" data-id="{{ item.id }}"><i class="material-icons">&#xE872;</i></a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+        
+          <tfoot class="bg-gray-200">
+            <tr id="totalRow">
+              <td colspan="6" class="border border-gray-300 p-2 text-center font-bold">Grand Total:</td>
+              <td id="totalOrderQty" class="border border-gray-300 p-2 font-bold"></td>
+              <td id="totalDailyProd" class="border border-gray-300 p-2 font-bold"></td>
+              <td id="totalTotalProd" class="border border-gray-300 p-2 font-bold"></td>
+              <td id="totalDailyInsp" class="border border-gray-300 p-2 font-bold"></td>
+              <td id="totalTotalInsp" class="border border-gray-300 p-2 font-bold"></td>
+              <td id="totalDailyPackPass" class="border border-gray-300 p-2 font-bold"></td>
+              <td id="totalTotalPackPass" class="border border-gray-300 p-2 font-bold"></td>
+              <td id="totalLineBalance" class="border border-gray-300 p-2 font-bold"></td>
+              <td id="totalInspBalance" class="border border-gray-300 p-2 font-bold"></td>
+              <td id="totalTotalBalance" class="border border-gray-300 p-2 font-bold"></td>
+            </tr>
+          </tfoot>
+        </table>
+        
+        
+        <div class="clearfix">
+          <div class="hint-text">Showing <b>5</b> out of <b>25</b> entries</div>
+          <ul class="pagination">
+              <li class="page-item disabled"><a href="#"><i class="fa fa-angle-double-left"></i></a></li>
+              <li class="page-item"><a href="#" class="page-link">1</a></li>
+              <li class="page-item"><a href="#" class="page-link">2</a></li>
+              <li class="page-item active"><a href="#" class="page-link">3</a></li>
+              <li class="page-item"><a href="#" class="page-link">4</a></li>
+              <li class="page-item"><a href="#" class="page-link">5</a></li>
+              <li class="page-item"><a href="#" class="page-link"><i class="fa fa-angle-double-right"></i></a></li>
+          </ul>
+        </div>
+      </div>
+      <form method="get" action="{% url 'export_excel' %}">
+        <div class="flex justify-center mt-4">
+          <button id="download-excel" class="bg-green-500 text-white px-4 py-2 rounded">Download Excel</button>
+        </div>
+      </form>
+      
+    </div>
+
+
+    <script>
+      var FLOOR_CHOICES = JSON.parse('{{ floor_choices|escapejs }}');
+      var LINE_CHOICES = JSON.parse('{{ line_choices|escapejs }}');
+      document.addEventListener("DOMContentLoaded", function () {
+        const tableBody = document.getElementById("table-body");
+      
+          // Function to create a new row
+          function addNewRecord(afterRow = null) {
+            const newRow = document.createElement("tr");
+            newRow.className = "hover:bg-gray-100";
+      
+            // Column headers
+            const columns = [
+            "Floor", "Line", "Buyer", "Style", "Item", "PO/Buy", "Order Qty","Daily Prod", "Total Prod", "Daily Insp", 
+            "Total Insp", "Daily Pack Pass", "Total Pack Pass", "Line Balance", "Insp Balance", "Total Balance","Remarks", "Actions"
+            ];
+      
+            columns.forEach((column) => {
+              const newCell = document.createElement("td");
+              newCell.className = "border border-gray-300 p-2";
+      
+              if (["Floor", "Line"].includes(column)) {
+                const dropdown = document.createElement("select");
+                dropdown.className = "w-full p-1 border border-gray-300 rounded";
+                const placeholder = document.createElement("option");
+                placeholder.textContent = `Select ${column}`;
+                placeholder.disabled = true;
+                placeholder.selected = true;
+                dropdown.appendChild(placeholder);
+      
+                const options = column === "Floor" ? FLOOR_CHOICES : LINE_CHOICES;
+                options.forEach((optionData) => {
+                  const option = document.createElement("option");
+                  option.value = optionData.value;
+                  option.textContent = optionData.text;
+                  dropdown.appendChild(option);
+                });
+
+                dropdown.addEventListener("keydown", handleKeyNavigation);
+                newCell.appendChild(dropdown);
+              } else if (column === "Total Balance") {
+                  // "Total Balance" column will be readonly
+                  const resultField = document.createElement("input");
+                  resultField.type = "text";
+                  resultField.className = "w-full p-1 border border-gray-300 rounded bg-gray-100";
+                  resultField.readOnly = true;
+                  newCell.appendChild(resultField);
+                } else if (column === "Actions") {
+                    const deleteButton = document.createElement("a");
+                    deleteButton.className = "delete";
+                    deleteButton.title = "Delete";
+                    deleteButton.innerHTML = '<i class="material-icons">&#xE872;</i>'; // Trash Icon
+
+                    // Attach event listener for delete functionality
+                    deleteButton.addEventListener("click", function () {
+                        const allRows = tableBody.querySelectorAll("tr"); // Get all rows
+                        
+                        if (allRows.length > 1) {
+                            // If multiple rows exist, delete normally
+                            newRow.remove();
+                        } else {
+                            // If it's the last row, delete it and add a new empty row
+                            newRow.remove();
+                            addNewRecord(); // Automatically create a new row
+                        }
+                    });
+
+                    newCell.appendChild(deleteButton);
+                }else {
+                  // Add input fields for other columns
+                  const inputField = document.createElement("input");
+                  inputField.type = "text";
+                  inputField.className = "w-full p-1 border border-gray-300 rounded";
+
+                  // Attach event listener for calculations
+                  if (["Total Prod", "Total Pack Pass", "Line Balance", "Insp Balance", "Remarks"].includes(column)) {
+                    inputField.addEventListener("input", () => updateTotalBalance(newRow));
+                  }
+
+                  inputField.addEventListener("keydown", handleKeyNavigation);
+                  newCell.appendChild(inputField);
+                }
+      
+                newRow.appendChild(newCell);
+              });
+      
+            if (afterRow) {
+              tableBody.insertBefore(newRow, afterRow.nextSibling);
+            } else {
+              tableBody.appendChild(newRow);
+            }
+          }
+          
+        function updateTotalBalance(row) {
+          const totalProdInput = row.querySelector("td:nth-child(9) input"); 
+          const totalPackPassInput = row.querySelector("td:nth-child(13) input");
+          const lineBalanceInput = row.querySelector("td:nth-child(14) input");
+          const inspBalanceInput = row.querySelector("td:nth-child(15) input");
+          const totalBalanceInput = row.querySelector("td:nth-child(16) input");
+          const remarksCell = row.querySelector("td:nth-child(17)"); 
+
+          const totalProd = parseInt(totalProdInput.value) || 0;
+          const totalPackPass = parseInt(totalPackPassInput.value) || 0;
+          const calculatedBalance = totalProd - totalPackPass;
+
+          const lineBalance = parseInt(lineBalanceInput.value) || 0;
+          const inspBalance = parseInt(inspBalanceInput.value) || 0;
+          
+          const sumBalance = lineBalance + inspBalance;
+
+          if (calculatedBalance >= 0) {
+            if (calculatedBalance === sumBalance) {
+                totalBalanceInput.value = calculatedBalance;
+            } else {
+                totalBalanceInput.value = "Mismatch";
+            }
+
+          remarksCell.textContent = "";
+          const remarksInput = document.createElement("input");
+          remarksInput.type = "text";
+          remarksInput.placeholder = "Type your remarks here...";
+          remarksCell.appendChild(remarksInput);
+          } else if (calculatedBalance < 0) {
+            totalBalanceInput.value = 0;
+
+            remarksCell.textContent = "";
+
+            const leftInput = document.createElement("input");
+            leftInput.type = "text";
+            leftInput.placeholder = "Left text";
+            leftInput.style.marginRight = "5px"; 
+
+            const middleSpan = document.createElement("span");
+            middleSpan.textContent = `${Math.abs(calculatedBalance)} pcs` ; 
+            middleSpan.style.marginRight = " 0 5px"; 
+
+            const rightInput = document.createElement("input");
+            rightInput.type = "text";
+            rightInput.placeholder = "Right text";
+            rightInput.style.marginLeft = "5px";
+
+            remarksCell.appendChild(leftInput);
+            remarksCell.appendChild(middleSpan);
+            remarksCell.appendChild(rightInput);
+          }
+          
+        } 
+
+
+  $(document).ready(function () {
+    var floorRemarks = JSON.parse(localStorage.getItem("floorRemarks")) || {};
+    var savedData = JSON.parse(localStorage.getItem("tableData")) || {};
+
+    // Restore input values after reload
+    $("#table-body tr").each(function () {
+        var rowId = $(this).attr("data-row-id"); // Get row ID
+        if (savedData[rowId]) {
+            $(this).find("td input").each(function (columnIndex) {
+                if (savedData[rowId][columnIndex] !== undefined) {
+                    $(this).val(savedData[rowId][columnIndex]); // Restore previous input
+                }
+            });
+        }
+    });
+
+    function updateTotals() {
+        var totalOrderQty = 0, totalDailyProd = 0, totalTotalProd = 0;
+        var totalDailyInsp = 0, totalTotalInsp = 0, totalDailyPackPass = 0;
+        var totalTotalPackPass = 0, totalLineBalance = 0, totalInspBalance = 0, totalTotalBalance = 0;
+
+        var floorTotals = {};
+        var $tableBody = $("#table-body");
+        $(".floor-subtotal-row").remove(); // Remove previous subtotal rows
+
+        var rows = $tableBody.find("tr").toArray();
+
+        // Sort rows based on floor and line
+        rows.sort(function (rowA, rowB) {
+          var floorA = $(rowA).find("td select").first().val() || "";
+          var floorB = $(rowB).find("td select").first().val() || "";
+          var lineA = $(rowA).find("td select:eq(1)").val() || "";
+          var lineB = $(rowB).find("td select:eq(1)").val() || "";
+
+            if (floorA !== floorB) return floorA - floorB;
+            return lineA - lineB;
+        });
+
+        $tableBody.append(rows); // Apply sorted order
+
+        var previousFloor = null;
+        var lastRow = null;
+
+        $(rows).each(function () {
+            var $row = $(this);
+            var floor = $row.find("td select").first().find("option:selected").text().trim();
+
+            if (!floor) {
+                $row.hide();
+                return;
+            } else {
+                $row.show();
+            }
+
+            if (!floorTotals[floor]) {
+                floorTotals[floor] = { orderQty: 0, dailyProd: 0, totalProd: 0, dailyInsp: 0, totalInsp: 0, dailyPackPass: 0, totalPackPass: 0, lineBalance: 0, inspBalance: 0, totalBalance: 0 };
+            }
+
+            function sumColumn(columnIndex, field) {
+                var value = $row.find(`td:nth-child(${columnIndex}) input`).val().trim();
+                value = value.replace(/[^0-9.]/g, ""); // Remove non-numeric characters
+                var numValue = parseFloat(value);
+                if (isNaN(numValue)) numValue = 0;
+                floorTotals[floor][field] += numValue;
+                return numValue;
+            }
+
+            totalOrderQty += sumColumn(7, "orderQty");
+            totalDailyProd += sumColumn(8, "dailyProd");
+            totalTotalProd += sumColumn(9, "totalProd");
+            totalDailyInsp += sumColumn(10, "dailyInsp");
+            totalTotalInsp += sumColumn(11, "totalInsp");
+            totalDailyPackPass += sumColumn(12, "dailyPackPass");
+            totalTotalPackPass += sumColumn(13, "totalPackPass");
+            totalLineBalance += sumColumn(14, "lineBalance");
+            totalInspBalance += sumColumn(15, "inspBalance");
+            totalTotalBalance += sumColumn(16, "totalBalance");
+
+            if (previousFloor !== null && previousFloor !== floor) {
+                insertFloorSubtotalRow(previousFloor, lastRow);
+            }
+
+            previousFloor = floor;
+            lastRow = $row;
+        });
+
+        if (previousFloor !== null) {
+            insertFloorSubtotalRow(previousFloor, lastRow);
+        }
+
+        $("#totalOrderQty").text(totalOrderQty);
+        $("#totalDailyProd").text(totalDailyProd);
+        $("#totalTotalProd").text(totalTotalProd);
+        $("#totalDailyInsp").text(totalDailyInsp);
+        $("#totalTotalInsp").text(totalTotalInsp);
+        $("#totalDailyPackPass").text(totalDailyPackPass);
+        $("#totalTotalPackPass").text(totalTotalPackPass);
+        $("#totalLineBalance").text(totalLineBalance);
+        $("#totalInspBalance").text(totalInspBalance);
+        $("#totalTotalBalance").text(totalTotalBalance);
+
+        function insertFloorSubtotalRow(floor, $lastRow) {
+            var existingRemark = floorRemarks[floor] || "";
+            var subtotalRow = `
+            <tr class="floor-subtotal-row bg-gray-300 font-bold">
+              <td colspan="6" class="border border-gray-300 p-2 text-center">Subtotal for ${floor}</td>
+              <td class="border border-gray-300 p-2">${floorTotals[floor].orderQty}</td>
+              <td class="border border-gray-300 p-2">${floorTotals[floor].dailyProd}</td>
+              <td class="border border-gray-300 p-2">${floorTotals[floor].totalProd}</td>
+              <td class="border border-gray-300 p-2">${floorTotals[floor].dailyInsp}</td>
+              <td class="border border-gray-300 p-2">${floorTotals[floor].totalInsp}</td>
+              <td class="border border-gray-300 p-2">${floorTotals[floor].dailyPackPass}</td>
+              <td class="border border-gray-300 p-2">${floorTotals[floor].totalPackPass}</td>
+              <td class="border border-gray-300 p-2">${floorTotals[floor].lineBalance}</td>
+              <td class="border border-gray-300 p-2">${floorTotals[floor].inspBalance}</td>
+              <td class="border border-gray-300 p-2">${floorTotals[floor].totalBalance}</td>
+              <td colspan="2" class="border border-gray-300 p-2">
+                <textarea class="w-full p-1 border border-gray-400 rounded floor-remarks" 
+                          data-floor="${floor}" 
+                          placeholder="Type your remarks here...">${existingRemark}</textarea>
+              </td>
+            </tr>
+            `;
+            if ($lastRow) {
+                $lastRow.after(subtotalRow);
+            } else {
+                $tableBody.append(subtotalRow);
+            }
+        }
+    }
+
+    updateTotals();
+
+    // Save data when input field loses focus (blur event)
+    $(document).on("blur", "td input", function () {
+        var $input = $(this);
+        var rowId = $input.closest("tr").attr("data-row-id"); // Get unique row ID
+        var columnIndex = $input.closest("td").index();
+        var inputValue = $input.val();
+
+        var savedData = JSON.parse(localStorage.getItem("tableData")) || {};
+        if (!savedData[rowId]) {
+            savedData[rowId] = {};
+        }
+        savedData[rowId][columnIndex] = inputValue;
+
+        localStorage.setItem("tableData", JSON.stringify(savedData));
+        updateTotals();
+    });
+
+    $(document).on("input", ".floor-remarks", function () {
+        var floorKey = $(this).data("floor");
+        floorRemarks[floorKey] = $(this).val();
+        localStorage.setItem("floorRemarks", JSON.stringify(floorRemarks));
+    });
+
+    $(document).on("change", "td select", function () {
+        updateTotals();
+    });
+});
+
+
+    // Function to handle key navigation
+      function handleKeyNavigation(event) {
+        const input = event.target;
+        const cell = input.closest("td");
+        const row = cell.closest("tr");
+        const allRows = Array.from(tableBody.querySelectorAll("tr"));
+        const rowIndex = allRows.indexOf(row);
+        const cells = Array.from(row.querySelectorAll("td"));
+        const cellIndex = cells.indexOf(cell);
+
+        if (event.key === "ArrowUp") {
+        // Move to the same cell in the upper row
+          if (rowIndex > 0) {
+            const upperRow = allRows[rowIndex - 1];
+            const upperCell = upperRow.querySelectorAll("td")[cellIndex];
+            const upperInput = upperCell.querySelector("input, select");
+            if (upperInput) upperInput.focus();
+          }
+        } else if (event.key === "ArrowDown") {
+        // Move to the same cell in the lower row
+            if (rowIndex < allRows.length - 1) {
+              const lowerRow = allRows[rowIndex + 1];
+              const lowerCell = lowerRow.querySelectorAll("td")[cellIndex];
+              const lowerInput = lowerCell.querySelector("input, select");
+              if (lowerInput) lowerInput.focus();
+            }
+          } else if (event.key === "ArrowLeft") {
+            // Move to the left cell in the same row
+              if (cellIndex > 0) {
+                const leftCell = cells[cellIndex - 1];
+                const leftInput = leftCell.querySelector("input, select");
+                if (leftInput) leftInput.focus();
+              }
+            } else if (event.key === "ArrowRight") {
+            // Move to the right cell in the same row
+                if (cellIndex < cells.length - 1) {
+                  const rightCell = cells[cellIndex + 1];
+                  const rightInput = rightCell.querySelector("input, select");
+                  if (rightInput) rightInput.focus();
+                }
+              }
+      
+            // Add new row when pressing Shift + Enter
+            if (event.key === "Enter" && event.shiftKey) {
+              event.preventDefault();
+              addNewRecord(row);
+            }
+      
+            // Add new row when pressing Enter in the last cell of the last row
+            if (
+              event.key === "Enter" &&
+              rowIndex === allRows.length - 1 &&
+              cellIndex === cells.length - 1
+            ) {
+              event.preventDefault();
+              addNewRecord();
+            }
+          }
+      
+          // Detect Enter press outside the table to add a new row
+          document.addEventListener("keydown", (event) => {
+            if (
+              event.key === "Enter" &&
+              !document.activeElement.closest("table")
+            ) {
+              addNewRecord();
+            }
+          });
+      
+          // Add an initial row
+          addNewRecord();
+        });
+
+        document.addEventListener("DOMContentLoaded", function () {
+        const tableBody = document.getElementById("table-body");
+
+        // Attach event listener to the table to handle delete clicks dynamically
+        tableBody.addEventListener("click", function (event) {
+            if (event.target.closest(".delete")) {
+                const row = event.target.closest("tr"); // Find the row
+                if (confirm("Are you sure you want to delete this row?")) {
+                    row.remove(); // Remove the row from the table
+                }
+            }
+        });
+    });
+
+    function saveToLocalStorage() {
+    let tableData = [];
+    document.querySelectorAll("#table-body tr").forEach(row => {
+        let rowData = {};
+        let isEmpty = true;
+
+        row.querySelectorAll("td:not(:last-child)").forEach((cell, index) => {
+            let input = cell.querySelector("input, select");
+            let value = input ? input.value.trim() : cell.textContent.trim();
+
+            if (value !== "") isEmpty = false; // Check if row has data
+
+            if (index === 16) { // Remarks column
+                let leftInput = cell.querySelector("input:nth-of-type(1)");
+                let rightInput = cell.querySelector("input:nth-of-type(2)");
+
+                rowData["remarksLeft"] = leftInput ? leftInput.value.trim() : "";
+                rowData["remarksRight"] = rightInput ? rightInput.value.trim() : "";
+            } else {
+                rowData[`col${index}`] = value;
+            }
+        });
+
+        if (!isEmpty) tableData.push(rowData); // Only save rows with data
+    });
+
+    localStorage.setItem("productionData", JSON.stringify(tableData));
+}
+
+
+function loadFromLocalStorage() {
+    let storedData = localStorage.getItem("productionData");
+    let tableBody = document.getElementById("table-body");
+    tableBody.innerHTML = ""; // Clear table before loading
+
+    if (storedData) {
+        let tableData = JSON.parse(storedData);
+
+        tableData.forEach(rowData => {
+            const newRow = document.createElement("tr");
+            newRow.className = "hover:bg-gray-100";
+
+            for (let index = 0; index <= 16; index++) {
+                let newCell = document.createElement("td");
+                newCell.className = "border border-gray-300 p-2";
+
+                if (index === 0 || index === 1) { // Floor & Line Dropdowns
+                    let select = document.createElement("select");
+                    select.className = "w-full p-1 border border-gray-300 rounded";
+
+                    let placeholder = document.createElement("option");
+                    placeholder.textContent = index === 0 ? "Select Floor" : "Select Line";
+                    placeholder.disabled = true;
+                    select.appendChild(placeholder);
+
+                    const options = index === 0 ? FLOOR_CHOICES : LINE_CHOICES;
+                    options.forEach(optionData => {
+                        let option = document.createElement("option");
+                        option.value = optionData.value;
+                        option.textContent = optionData.text;
+                        select.appendChild(option);
+                    });
+
+                    select.value = rowData[`col${index}`] || "";
+                    select.addEventListener("change", saveToLocalStorage);
+                    newCell.appendChild(select);
+                } else if (index === 15) { // Read-only Total Balance
+                    let totalBalanceInput = document.createElement("input");
+                    totalBalanceInput.type = "text";
+                    totalBalanceInput.className = "w-full p-1 border border-gray-300 rounded bg-gray-100";
+                    totalBalanceInput.readOnly = true;
+                    totalBalanceInput.value = rowData[`col${index}`] || "";
+                    newCell.appendChild(totalBalanceInput);
+                } else if (index === 16) { // Remarks Column
+                    newCell.innerHTML = ""; 
+
+                    let leftInput = document.createElement("input");
+                    leftInput.type = "text";
+                    leftInput.value = rowData["remarksLeft"] || "";
+                    leftInput.placeholder = "Left text";
+                    leftInput.style.marginRight = "5px";
+
+                    let rightInput = document.createElement("input");
+                    rightInput.type = "text";
+                    rightInput.value = rowData["remarksRight"] || "";
+                    rightInput.placeholder = "Right text";
+                    rightInput.style.marginLeft = "5px";
+
+                    newCell.appendChild(leftInput);
+                    newCell.appendChild(rightInput);
+                } else { // Other input fields
+                    let input = document.createElement("input");
+                    input.type = "text";
+                    input.value = rowData[`col${index}`] || "";
+                    input.className = "w-full p-1 border border-gray-300 rounded";
+                    input.addEventListener("input", saveToLocalStorage);
+                    newCell.appendChild(input);
+                }
+
+                newRow.appendChild(newCell);
+            }
+
+            // ✅ Correctly Add Delete Button
+            let deleteCell = document.createElement("td");
+            deleteCell.className = "border border-gray-300 p-2 text-center";
+
+            let deleteButton = document.createElement("button");
+            deleteButton.textContent = "❌";
+            deleteButton.className = "text-red-500 cursor-pointer px-2";
+            deleteButton.onclick = function () {
+                newRow.remove();
+                saveToLocalStorage();
+            };
+
+            deleteCell.appendChild(deleteButton);
+            newRow.appendChild(deleteCell);
+
+            tableBody.appendChild(newRow);
+        });
+    }
+}
+
+
+// Save data on any table change
+document.getElementById("table-body").addEventListener("input", saveToLocalStorage);
+
+// Load data when the page loads
+document.addEventListener("DOMContentLoaded", loadFromLocalStorage);
+
+//=========Convert Excel file========//
+
+
+
+document.getElementById("download-excel").addEventListener("click", function(event) { 
+    event.preventDefault();
+
+    let allRows = document.querySelectorAll("#calculation-table tbody tr:not(.deleted)");
+    let tableData = [];
+    let finalResult = {
+        order_qty: 0, daily_prod: 0, total_prod: 0, daily_insp: 0, total_insp: 0, 
+        daily_packpass: 0, total_packpass: 0, line_balance: 0, insp_balance: 0, total_balance: 0
+    };
+
+    allRows.forEach(row => {
+        if (row.style.display === "none") return; // Skip hidden rows
+
+        let rowData = [];
+        let isSubtotalRow = row.innerText.includes("Subtotal for Floor"); // Identify subtotal rows
+
+        row.querySelectorAll("td").forEach((cell, index) => {
+            let cellValue = "";
+            if (cell.querySelector("input, textarea, select")) {
+                cellValue = cell.querySelector("input, textarea, select").value.trim();
+            } else {
+              cellValue = cell.textContent.trim();   // Preserve line breaks
+            }
+
+            rowData.push(cellValue);
+
+            // ✅ Only sum if it's NOT a subtotal row
+            if (!isSubtotalRow && index >= 6 && index <= 15) {
+                finalResult[Object.keys(finalResult)[index - 6]] += parseFloat(cellValue) || 0;
+            }
+        });
+
+        tableData.push(rowData);
+    });
+
+    // ✅ Add the final result row correctly
+    let finalResultRow = ["Final Result:"];
+    Object.values(finalResult).forEach(value => finalResultRow.push(value));
+    finalResultRow.push(""); // Empty "Remarks" column
+    tableData.push(finalResultRow);
+
+    // Send data to backend
+    fetch("{% url 'export_excel' %}", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": "{{ csrf_token }}"
+        },
+        body: JSON.stringify({ table_data: tableData })
+    })
+    .then(response => response.blob())
+    .then(blob => {
+        let link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = "production_data.xlsx";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    })
+    .catch(error => console.error("Error downloading Excel:", error));
+});
+
+
+
+    </script>   
+  </body>
+</html>

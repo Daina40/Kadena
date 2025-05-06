@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Production & Inspection</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100">
+    <div class="container mx-auto my-8 p-4 bg-white shadow-md rounded-md">
+        <h1 class="text-2xl font-bold mb-4 text-center">Daily Production & Inspection</h1>
+        <p class="text-center text-sm mb-4">
+            {{ day_name }}, {{ month_name }} {{ day_number }}, {{ year }}
+        </p>
+        <table class="table-auto w-full border-collapse border border-gray-300 text-sm text-gray-700">
+            <thead class="bg-gray-200">
+                <tr>
+                    <th class="border border-gray-300 px-2 py-1">Floor</th>
+                    <th class="border border-gray-300 px-2 py-1">Line</th>
+                    <th class="border border-gray-300 px-2 py-1">Buyer</th>
+                    <th class="border border-gray-300 px-2 py-1">Style</th>
+                    <th class="border border-gray-300 px-2 py-1">Item</th>
+                    <th class="border border-gray-300 px-2 py-1">PO/Buy</th>
+                    <th class="border border-gray-300 px-2 py-1">Order Qty</th>
+                    <th class="border border-gray-300 px-2 py-1">Daily Prod</th>
+                    <th class="border border-gray-300 px-2 py-1">Total Prod</th>
+                    <th class="border border-gray-300 px-2 py-1">Daily Insp</th>
+                    <th class="border border-gray-300 px-2 py-1">Total Insp</th>
+                    <th class="border border-gray-300 px-2 py-1">Daily Pack Pass</th>
+                    <th class="border border-gray-300 px-2 py-1">Total Pack Pass</th>
+                    <th class="border border-gray-300 px-2 py-1">Line Balance</th>
+                    <th class="border border-gray-300 px-2 py-1">Insp Balance</th>
+                    <th class="border border-gray-300 px-2 py-1">Total Balance</th>
+                    <th class="border border-gray-300 px-2 py-1">Over Prod</th>
+                    <th class="border border-gray-300 px-2 py-1">Over Pass</th>
+                    <th class="border border-gray-300 px-2 py-1">Repair Balance</th>
+                    <th class="border border-gray-300 px-2 py-1">Remarks</th>
+                    <th class="py-3 px-6">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for production in productions %}
+                <tr class="odd:bg-white even:bg-gray-100">
+                    <td class="border border-gray-300 px-2 py-1">{{ production.floor }}</td>
+                    <td class="border border-gray-300 px-2 py-1">{{ production.line }}</td>
+                    <td class="border border-gray-300 px-2 py-1">{{ production.buyer }}</td>
+                    <td class="border border-gray-300 px-2 py-1">{{ production.style }}</td>
+                    <td class="border border-gray-300 px-2 py-1">{{ production.item }}</td>
+                    <td class="border border-gray-300 px-2 py-1">{{ production.po_buy }}</td>
+                    <td class="border border-gray-300 px-2 py-1">{{ production.order_qty }}</td>
+                    <td class="border border-gray-300 px-2 py-1">{{ production.daily_prod }}</td>
+                    <td class="border border-gray-300 px-2 py-1">{{ production.total_prod }}</td>
+                    <td class="border border-gray-300 px-2 py-1">{{ production.daily_insp }}</td>
+                    <td class="border border-gray-300 px-2 py-1">{{ production.total_insp }}</td>
+                    <td class="border border-gray-300 px-2 py-1">{{ production.daily_packpass }}</td>
+                    <td class="border border-gray-300 px-2 py-1">{{ production.total_packpass }}</td>
+                    <td class="border border-gray-300 px-2 py-1">{{ production.line_balance }}</td>
+                    <td class="border border-gray-300 px-2 py-1">{{ production.insp_balance }}</td>
+                    <td class="border border-gray-300 px-2 py-1">{{ production.total_balance }}</td>
+                    <td class="border border-gray-300 px-2 py-1">{{ production.over_prod }}</td>
+                    <td class="border border-gray-300 px-2 py-1">{{ production.over_pass }}</td>
+                    <td class="border border-gray-300 px-2 py-1">{{ production.repair_balance }}</td>
+                    <td class="border border-gray-300 px-2 py-1">{{ production.remarks }}</td>
+                    <td class="py-3 px-6 flex space-x-2">
+                      <button class="text-blue-500 hover:text-blue-700">
+                          <i class="fas fa-edit"></i>
+                      </button>
+                      <button class="text-red-500 hover:text-red-700">
+                          <i class="fas fa-trash"></i>
+                      </button>
+                  </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <div class="flex items-center justify-between mt-4">
+          <div class="text-sm text-gray-600">
+              Showing <b>5</b> out of <b>25</b> entries
+          </div>
+          <ul class="inline-flex items-center space-x-1">
+              <!-- Previous Button -->
+              <li>
+                  <button class="px-3 py-1 rounded-md text-gray-400 bg-gray-100 cursor-not-allowed">
+                      Previous
+                  </button>
+              </li>
+              <!-- Page Numbers -->
+              <li>
+                  <button class="px-3 py-1 rounded-md text-gray-600 hover:bg-blue-100 hover:text-blue-600">
+                      1
+                  </button>
+              </li>
+              <li>
+                  <button class="px-3 py-1 rounded-md text-gray-600 hover:bg-blue-100 hover:text-blue-600">
+                      2
+                  </button>
+              </li>
+              <li>
+                  <button class="px-3 py-1 rounded-md text-white bg-blue-500">
+                      3
+                  </button>
+              </li>
+              <li>
+                  <button class="px-3 py-1 rounded-md text-gray-600 hover:bg-blue-100 hover:text-blue-600">
+                      4
+                  </button>
+              </li>
+              <li>
+                  <button class="px-3 py-1 rounded-md text-gray-600 hover:bg-blue-100 hover:text-blue-600">
+                      5
+                  </button>
+              </li>
+              <!-- Next Button -->
+              <li>
+                  <button class="px-3 py-1 rounded-md text-gray-600 bg-gray-100 hover:bg-blue-100 hover:text-blue-600">
+                      Next
+                  </button>
+              </li>
+          </ul>
+      </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,200 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Defect Status</title>
+    <link rel="stylesheet" href="{% static 'assets/css/midline_defect.css' %}">
+</head>
+<body>
+    <div class="container">
+        <div class="header-container">
+            <h1>Daily Defect Status</h1>
+            <a href="{% url 'add' %}"><button id="new3">Add Defects</button></a> 
+            <a href="{% url 'midline_defect_export' %}" class="bg-green-500 text-white px-4 py-2 rounded"><button id="new3">Download Excel</button></a>
+        </div>
+        <div class="table-wrapper" style="max-height: 500px; overflow-y: auto;">
+            <table id="defects" border="1" style="width:100%">
+                <thead class="fixed-header">
+                    <!-- Percentage Row Above Subtotal -->
+                    <tr>
+                        <th colspan="11"></th>
+                        {% for defect in defect_percentages %}
+                            <th>{{ defect.percentage|floatformat:2 }}%</th>
+                        {% endfor %}
+                    </tr>
+                    <!-- Subtotal Row Above Headers -->
+                    <tr>
+                        <th>Subtotal</th>
+                        <th colspan="9"></th>
+                        <td><small>{{ total_inspect_qty }}</small></td>
+                        <td><small>{{ fabric_fault }}</small></td>
+                        <td><small>{{ shading }}</small></td>
+                        <td><small>{{ trims_missing }}</small></td>
+                        <td><small>{{ bartack_missing }}</small></td>
+                        <td><small>{{ label_stitch_wrong_panel }}</small></td>
+                        <td><small>{{ others_1 }}</small></td>
+                        <td><small>{{ broken }}</small></td>
+                        <td><small>{{ pleat }}</small></td>
+                        <td><small>{{ open_seam }}</small></td>
+                        <td><small>{{ damage_1 }}</small></td>
+                        <td><small>{{ needle_mark }}</small></td>
+                        <td><small>{{ run_off_stitch }}</small></td>
+                        <td><small>{{ high_low }}</small></td>
+                        <td><small>{{ bad_tension }}</small></td>
+                        <td><small>{{ puckering }}</small></td>
+                        <td><small>{{ uneven }}</small></td>
+                        <td><small>{{ bias }}</small></td>
+                        <td><small>{{ skip }}</small></td>
+                        <td><small>{{ twisted }}</small></td>
+                        <td><small>{{ fabric_loose }}</small></td>
+                        <td><small>{{ fabric_catch }}</small></td>
+                        <td><small>{{ zipper_wavy }}</small></td>
+                        <td><small>{{ raw_edge }}</small></td>
+                        <td><small>{{ others_2 }}</small></td>
+                        <td><small>{{ out_of_tolerance }}</small></td>
+                        <td><small>{{ oil }}</small></td>
+                        <td><small>{{ soilage }}</small></td>
+                        <td><small>{{ uncut_thread }}</small></td>
+                        <td><small>{{ number_mark }}</small></td>
+                        <td><small>{{ damage_2 }}</small></td>
+                        <td><small>{{ dirty_spot }}</small></td>
+                        <td><small>{{ color_bleed }}</small></td>
+                        <td><small>{{ others_defects }}</small></td>
+                        <td><small>{{ total_defect_points }}</small></td>
+                        <td><small>{{ dhu_shell_line|floatformat:0 }}</small></td>
+                        <td><small>{{ total_defect_pcs }}</small></td>
+                        <td><small>{{ defective_shell }}%</small></td>
+                    </tr>
+                    <tr>
+                        <th rowspan="2">Month</th>
+                        <th rowspan="2">Date</th>
+                        <th rowspan="2">Floor</th>
+                        <th rowspan="2">Line</th>
+                        <th rowspan="2">Mid Line Qc name</th>
+                        <th rowspan="2">Mid Line Qc ID</th>
+                        <th rowspan="2">Buyer</th>
+                        <th rowspan="2">Style</th>
+                        <th rowspan="2">Order Qty</th>
+                        <th rowspan="2">Buy/PO</th>
+                        <th rowspan="2">Total Inspect Quantity (SHELL)</th>
+                        <th colspan="2">A: Fabric</th>
+                        <th>B:Trims</th>
+                        <th colspan="3">C: Construction</th>
+                        <th colspan="18">D: Stitching and Sewing</th>
+                        <th>E: M/ment</th>
+                        <th colspan="4">F: Wash and Triming</th>
+                        <th colspan="3">G: Loundry wash</th>
+                        <th>H: Others</th>
+                        <th rowspan="2">Total No. Of Defect Points (SHELL)</th>
+                        <th rowspan="2">DHU (SHELL LINE)</th>
+                        <th rowspan="2">Total Defect Pcs (SHELL)</th>
+                        <th rowspan="2">Defective% (SHEEL)</th>
+                        <th rowspan="2">Remarks</th>
+                        <th colspan="2" rowspan="2" id="mid">Action</th>
+                    </tr>
+                    <tr>
+                        <th>Fabric Fault</th>
+                        <th>Shading</th>
+                        <th>Trims missing</th>
+                        <th>Bartack missing</th>
+                        <th>Lbl/stc wrong position</th>
+                        <th>Others</th>
+                        <th>Broken</th>
+                        <th>Pleat</th>
+                        <th>Open seam</th>
+                        <th>Damage</th>
+                        <th>Ndl mark</th>
+                        <th>Run off stc</th>
+                        <th>High-Low</th>
+                        <th>Bad tension</th>
+                        <th>Puckering</th>
+                        <th>Uneven</th>
+                        <th>Bias</th>
+                        <th>Skip</th>
+                        <th>Twisted</th>
+                        <th>Fabric loose</th>
+                        <th>Fabric catch</th>
+                        <th>Zpr. Wavy</th>
+                        <th>Rawedge</th>
+                        <th>Others</th>
+                        <th>Out of tol</th>
+                        <th>Oil</th>
+                        <th>Soilage</th>
+                        <th>Uncut Thread</th>
+                        <th>Number mark</th>
+                        <th>Damage</th>
+                        <th>Dirty spot</th>
+                        <th>Color Bld</th>
+                        <th>Others DEF</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for defect in queryset %}
+                    <tr>
+                        <td>{{ defect.month }}</td>
+                        <td>{{ defect.date }}</td>
+                        <td>{{ defect.floor }}</td>
+                        <td>{{ defect.line }}</td>
+                        <td>{{ defect.qc_name }}</td>
+                        <td>{{ defect.qc_id }}</td>
+                        <td>{{ defect.buyer }}</td>
+                        <td>{{ defect.style }}</td>
+                        <td>{{ defect.order_qty }}</td>
+                        <td>{{ defect.buy_po }}</td>
+                        <td>{{ defect.total_inspect_quantity }}</td>
+                        <td>{{ defect.fabric_fault }}</td>
+                        <td>{{ defect.shading }}</td>
+                        <td>{{ defect.trims_missing }}</td>
+                        <td>{{ defect.bartack_missing }}</td>
+                        <td>{{ defect.label_stitch_wrong_panel }}</td>
+                        <td>{{ defect.others_1 }}</td>
+                        <td>{{ defect.broken }}</td>
+                        <td>{{ defect.pleat }}</td>
+                        <td>{{ defect.open_seam }}</td>
+                        <td>{{ defect.damage_1 }}</td>
+                        <td>{{ defect.needle_mark }}</td>
+                        <td>{{ defect.run_off_stitch }}</td>
+                        <td>{{ defect.high_low }}</td>
+                        <td>{{ defect.bad_tension }}</td>
+                        <td>{{ defect.puckering }}</td>
+                        <td>{{ defect.uneven }}</td>
+                        <td>{{ defect.bias }}</td>
+                        <td>{{ defect.skip }}</td>
+                        <td>{{ defect.twisted }}</td>
+                        <td>{{ defect.fabric_loose }}</td>
+                        <td>{{ defect.fabric_catch }}</td>
+                        <td>{{ defect.zipper_wavy }}</td>
+                        <td>{{ defect.raw_edge }}</td>
+                        <td>{{ defect.others_2 }}</td>
+                        <td>{{ defect.out_of_tolerance }}</td>
+                        <td>{{ defect.oil }}</td>
+                        <td>{{ defect.soilage }}</td>
+                        <td>{{ defect.uncut_thread }}</td>
+                        <td>{{ defect.number_mark }}</td>
+                        <td>{{ defect.damage_2 }}</td>
+                        <td>{{ defect.dirty_spot }}</td>
+                        <td>{{ defect.color_bleed }}</td>
+                        <td>{{ defect.others_defects }}</td>
+                        <td>{{ defect.total_defect_points }}</td>
+                        <td>{{ defect.dhu_shell_line|floatformat:0 }}</td>
+                        <td>{{ defect.total_defect_pcs }}</td>
+                        <td>{{ defect.defective_shell }}%</td>
+                        <td>{{ defect.remarks }}</td>
+                        <td><a href="{% url 'update_defect' defect.id %}"><button id="up">Update</button></a></td>
+                        <td>
+                            <form action="{% url 'delete_defect' defect.id %}" method="POST">
+                                {% csrf_token %}
+                                <button type="submit" id="del" class="bg-red-500 text-white px-4 py-2 rounded">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

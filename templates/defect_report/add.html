@@ -1,0 +1,155 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Defects</title>
+    <link rel="stylesheet" href="{% static 'assets/css/midline_defect.css' %}">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-100 flex justify-center items-center min-h-screen">
+    <div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-4xl">
+        <h1 class="text-2xl font-bold mb-6 text-center">Add Defects</h1>
+        <form action="{% url 'addnow' %}" method="post" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {% csrf_token %}
+            
+            <div>
+                <label for="month" class="block font-medium">Month:</label>
+                <input type="text" name="month" required class="w-full p-2 border rounded">
+            </div>
+
+            <div>
+                <label class="block font-medium">Date</label>
+                <input type="date" name="date" class="w-full border-gray-300 rounded-lg p-2" required>
+            </div>
+
+            <div>
+                <label for="floor" class="block font-medium">Floor:</label>
+                <select id="floor" name="floor" class="w-full p-2 border rounded">
+                    <option value="">-- Select Floor --</option>
+                    {% for value, name in floor_choices %}
+                        <option value="{{ name }}">{{ name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div>
+                <label for="line" class="block font-medium">Line:</label>
+                <select id="line" name="line" class="w-full p-2 border rounded">
+                    <option value="">-- Select Line --</option>
+                    {% for value, name in line_choices %}
+                        <option value="{{ name }}">{{ name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div>
+                <label for="qc_name" class="block font-medium">QC Name:</label>
+                <input type="text" name="qc_name" class="w-full p-2 border rounded">
+            </div>
+
+            <div>
+                <label for="qc_id" class="block font-medium">QC ID:</label>
+                <input type="text" name="qc_id" class="w-full p-2 border rounded">
+            </div>
+
+            <div>
+                <label for="buyer" class="block font-medium">Buyer:</label>
+                <input type="text" name="buyer" class="w-full p-2 border rounded">
+            </div>
+
+            <div>
+                <label for="style" class="block font-medium">Style:</label>
+                <input type="text" name="style" class="w-full p-2 border rounded">
+            </div>
+
+            <div>
+                <label for="style" class="block font-medium">Order Qty</label>
+                <input type="text" name="style" class="w-full p-2 border rounded">
+            </div>
+
+            <div>
+                <label for="style" class="block font-medium">Buy/PO</label>
+                <input type="text" name="style" class="w-full p-2 border rounded">
+            </div>
+
+            <div>
+                <label for="total_inspect_quantity" class="block font-medium">Total Inspect Quantity:</label>
+                <input type="number" name="total_inspect_quantity" required class="w-full p-2 border rounded">
+            </div>
+
+            <!-- Defect Fields (Grouped for Readability) -->
+            <div class="col-span-2">
+                <label class="block font-medium">Defects:</label>
+                <div class="grid grid-cols-2 gap-4">
+                    <input type="text" name="fabric_fault" placeholder="Fabric Fault" class="w-full p-2 border rounded">
+                    <input type="text" name="shading" placeholder="Shading" class="w-full p-2 border rounded">
+                    <input type="text" name="trims_missing" placeholder="Trims Missing" class="w-full p-2 border rounded">
+                    <input type="text" name="bartack_missing" placeholder="Bartack Missing" class="w-full p-2 border rounded">
+                    <input type="text" name="label_stitch_wrong_panel" placeholder="Lbl/Stc on wrng pnl" class="w-full p-2 border rounded">
+                    <input type="text" name="others_1" placeholder="Others" class="w-full p-2 border rounded">
+                    <input type="text" name="broken" placeholder="Broken" class="w-full p-2 border rounded">
+                    <input type="text" name="pleat" placeholder="Pleat" class="w-full p-2 border rounded">
+                    <input type="text" name="open_seam" placeholder="Open Seam" class="w-full p-2 border rounded">
+                    <input type="text" name="damage_1" placeholder="Damage" class="w-full p-2 border rounded">
+                    <input type="text" name="needle_mark" placeholder="Ndl Mark" class="w-full p-2 border rounded">
+                    <input type="text" name="run_off_stitch" placeholder="Run of Stc" class="w-full p-2 border rounded">
+                    <input type="text" name="high_low" placeholder="High-Low" class="w-full p-2 border rounded">
+                    <input type="text" name="bad_tension" placeholder="Bad Tension" class="w-full p-2 border rounded">
+                    <input type="text" name="puckering" placeholder="Puckering" class="w-full p-2 border rounded">
+                    <input type="text" name="uneven" placeholder="Uneven" class="w-full p-2 border rounded">
+                    <input type="text" name="bias" placeholder="Bias" class="w-full p-2 border rounded">
+                    <input type="text" name="skip" placeholder="Skip" class="w-full p-2 border rounded">
+                    <input type="text" name="twisted" placeholder="Twisted" class="w-full p-2 border rounded">
+                    <input type="text" name="fabric_loose" placeholder="Fabric Loose" class="w-full p-2 border rounded">
+                    <input type="text" name="fabric_catch" placeholder="Fabric catch" class="w-full p-2 border rounded">
+                    <input type="text" name="zipper_wavy" placeholder="Zipper Wavy" class="w-full p-2 border rounded">
+                    <input type="text" name="raw_edge" placeholder="Rawedge" class="w-full p-2 border rounded">
+                    <input type="text" name="others_2" placeholder="Others" class="w-full p-2 border rounded">
+                    <input type="text" name="out_of_tolerance" placeholder="Out of Tolerance" class="w-full p-2 border rounded">
+                    <input type="text" name="oil" placeholder="Oil" class="w-full p-2 border rounded">
+                    <input type="text" name="soilage" placeholder="Soilage" class="w-full p-2 border rounded">
+                    <input type="text" name="uncut_thread" placeholder="Uncut Thread" class="w-full p-2 border rounded">
+                    <input type="text" name="number_mark" placeholder="Number Mark" class="w-full p-2 border rounded">
+                    <input type="text" name="damage_2" placeholder="Damage" class="w-full p-2 border rounded">
+                    <input type="text" name="dirty_spot" placeholder="Dirty Spot" class="w-full p-2 border rounded">
+                    <input type="text" name="color_bleed" placeholder="Color Bld" class="w-full p-2 border rounded">
+                    <input type="text" name="others_defects" placeholder="Others Defects" class="w-full p-2 border rounded">
+                   
+                </div>
+            </div>
+
+            <div>
+                <label for="total_defect_points">Total Number of Defect Points:</label>
+                <input type="text" name="total_defect_points" id="total_defect_points" value="{{ total_defect_points }}" readonly><br>
+
+            </div>
+
+            <div>
+                <label for="dhu_shell_line" class="block font-medium">DHU Shell Line:</label>
+                <input type="text" name="dhu_shell_line" id="dhu_shell_line" value="{{ dhu_shell_line }}" readonly><br>
+            </div>
+
+            <div><input type="text" name="total_defect_pcs" placeholder="Total Defect Pcs (SHELL)" class="w-full p-2 border rounded"></div>
+            
+            <div>
+                <label for="defective_percentage" class="block font-medium">Defective% (SHEEL)</label>
+                <input type="text" name="defective_shell" id="defective_shell" value="{{ defective_shell|stringformat:"d" }}%" readonly><br>
+            </div>
+
+            <div class="col-span-2">
+                <label for="remarks" class="block font-medium">Remarks:</label>
+                <input type="text" name="remarks" class="w-full p-2 border rounded">
+            </div>
+
+            <div class="col-span-2 flex justify-center mt-4">
+                <button type="submit" class="btn btn-blue">Submit</button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

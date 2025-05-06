@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Production & Inspection Summary</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100">
+    <div class="container mx-auto my-8 p-4 bg-white shadow-md rounded-md">
+        <h1 class="text-2xl font-bold mb-4 text-center">Daily Production & Inspection Summary</h1>
+        <p class="text-center text-sm mb-4">
+            {{ day_name }}, {{ month_name }} {{ day_number }}, {{ year }}
+        </p>
+        <table class="table-auto w-full border-collapse border border-gray-300 text-sm text-gray-700">
+            <thead class="bg-gray-200">
+                <tr>
+                    <th class="border border-gray-300 px-2 py-1">Floor</th>
+                    <th class="border border-gray-300 px-2 py-1">Order Qty</th>
+                    <th class="border border-gray-300 px-2 py-1">Daily Prod</th>
+                    <th class="border border-gray-300 px-2 py-1">Ttl Prod</th>
+                    <th class="border border-gray-300 px-2 py-1">Daily Insp</th>
+                    <th class="border border-gray-300 px-2 py-1">Ttl Insp</th>
+                    <th class="border border-gray-300 px-2 py-1">Daily Pack Pass</th>
+                    <th class="border border-gray-300 px-2 py-1">Ttl Pack Pass</th>
+                    <th class="border border-gray-300 px-2 py-1">Line Bal</th>
+                    <th class="border border-gray-300 px-2 py-1">Insp Bal</th>
+                    <th class="border border-gray-300 px-2 py-1">Ttl Bal</th>
+                    <th class="border border-gray-300 px-2 py-1">Over Prod</th>
+                    <th class="border border-gray-300 px-2 py-1">Over Pass</th>
+                    <th class="border border-gray-300 px-2 py-1">Repair Bal</th>
+                    <th class="border border-gray-300 px-2 py-1">Remarks</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if productions %}
+                    {% for summary_production in productions %}
+                    <tr class="odd:bg-white even:bg-gray-100">
+                        <td class="border border-gray-300 px-2 py-1">{{ summary_production.floor }}</td>
+                        <td class="border border-gray-300 px-2 py-1">{{ summary_production.order_qty }}</td>
+                        <td class="border border-gray-300 px-2 py-1">{{ summary_production.daily_prod }}</td>
+                        <td class="border border-gray-300 px-2 py-1">{{ summary_production.total_prod }}</td>
+                        <td class="border border-gray-300 px-2 py-1">{{ summary_production.daily_insp }}</td>
+                        <td class="border border-gray-300 px-2 py-1">{{ summary_production.total_insp }}</td>
+                        <td class="border border-gray-300 px-2 py-1">{{ summary_production.daily_packpass }}</td>
+                        <td class="border border-gray-300 px-2 py-1">{{ summary_production.total_packpass }}</td>
+                        <td class="border border-gray-300 px-2 py-1">{{ summary_production.line_balance }}</td>
+                        <td class="border border-gray-300 px-2 py-1">{{ summary_production.insp_balance }}</td>
+                        <td class="border border-gray-300 px-2 py-1">{{ summary_production.total_balance }}</td>
+                        <td class="border border-gray-300 px-2 py-1">{{ summary_production.over_prod }}</td>
+                        <td class="border border-gray-300 px-2 py-1">{{ summary_production.over_pass }}</td>
+                        <td class="border border-gray-300 px-2 py-1">{{ summary_production.repair_balance }}</td>
+                        <td class="border border-gray-300 px-2 py-1">{{ summary_production.remarks }}</td>
+                    </tr>
+                    {% endfor %}
+                    <tr class="bg-gray-300 font-bold">
+                        <td class="border border-gray-300 px-2 py-1">SUB TOTAL</td>
+                        <td class="border border-gray-300 px-2 py-1">{{ subtotal_order_qty }}</td>
+                        <td class="border border-gray-300 px-2 py-1">{{ subtotal_daily_prod }}</td>
+                        <td class="border border-gray-300 px-2 py-1">{{ subtotal_total_prod }}</td>
+                        <td class="border border-gray-300 px-2 py-1">{{ subtotal_daily_insp }}</td>
+                        <td class="border border-gray-300 px-2 py-1">{{ subtotal_total_insp }}</td>
+                        <td class="border border-gray-300 px-2 py-1">{{ subtotal_daily_packpass }}</td>
+                        <td class="border border-gray-300 px-2 py-1">{{ subtotal_total_packpass }}</td>
+                        <td class="border border-gray-300 px-2 py-1">{{ subtotal_line_balance }}</td>
+                        <td class="border border-gray-300 px-2 py-1">{{ subtotal_insp_balance }}</td>
+                        <td class="border border-gray-300 px-2 py-1">{{ subtotal_total_balance }}</td>
+                        <td class="border border-gray-300 px-2 py-1">{{ subtotal_over_prod }}</td>
+                        <td class="border border-gray-300 px-2 py-1">{{ subtotal_over_pass }}</td>
+                        <td class="border border-gray-300 px-2 py-1">{{ subtotal_repair_balance }}</td>
+                        <td class="border border-gray-300 px-2 py-1"></td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="15" class="border border-gray-300 px-2 py-4 text-center">No data available</td>
+                    </tr>
+                {% endif %}
+            </tbody>
+            
+        </table>
+    </div>
+</body>
+</html>
