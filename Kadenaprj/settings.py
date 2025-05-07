@@ -25,9 +25,11 @@ TEMPLATES_DIR = os.path.join(BASE_DIR, 'templates')
 SECRET_KEY = 'django-insecure-im8#59fwc-tnwgb&x+v4ku*&7z+ty(h5a2@m(05yrpa22rsfq)'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
+# DEBUG = True 
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost', '127.0.0.1','kadena.pythonanywhere.com']
+
 
 
 # Application definition
@@ -128,6 +130,9 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
 ]
+
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # This is critical!
+
 
 
 # Default primary key field type
